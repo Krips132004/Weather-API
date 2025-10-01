@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🌤 Weather App</h1>
+
+    <div class="input-group">
+      <input type="text" id="lat" placeholder="Enter Latitude (e.g. 21.1702)">
+      <input type="text" id="lon" placeholder="Enter Longitude (e.g. 72.8311)">
+      <button onclick="getWeather()">Get Weather</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    async function getWeather() {
+      const lat = document.getElementById("lat").value;
+      const lon = document.getElementById("lon").value;
+      const apiKey = "45b3baf17b84f1e238c5b524141a8f86";
+
+      if (!lat || !lon) {
+        document.getElementById("result").innerHTML = "<p>Please enter latitude and longitude!</p>";
+        return;
+      }
+
+      const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if (data.cod !== 200) {
+          document.getElementById("result").innerHTML = "<p>Location not found!</p>";
+        } else {
+          document.getElementById("result").innerHTML = `
+            <div class="weather">
+              <h2>${data.name}, ${data.sys.country}</h2>
+              <p>🌡 Temperature: ${data.main.temp} °C</p>
+              <p>☁ Condition: ${data.weather[0].description}</p>
+              <p>💧 Humidity: ${data.main.humidity}%</p>
+              <p>🌬 Wind Speed: ${data.wind.speed} m/s</p>
+            </div>
+          `;
+        }
+      } catch (error) {
+        document.getElementById("result").innerHTML = "<p>⚠ Error fetching data!</p>";
+      }
+    }
+  </script>
+</body>
+</html>
